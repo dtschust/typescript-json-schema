@@ -1,7 +1,7 @@
 import { assert } from "chai";
 import { exec, getDefaultArgs } from "../typescript-json-schema";
 
-describe("out option", () => {
+xdescribe("out option", () => {
     beforeEach(
         () =>
             new Promise((resolve, reject) => {
