@@ -8,6 +8,5 @@ yarn-error.log
 .idea
 *~
 .#*
-dist/
 .DS_Store
 package-lock.json
