@@ -69,7 +69,7 @@
   "scripts": {
     "prepublishOnly": "yarn build",
     "test": "yarn build && mocha -t 5000 --require source-map-support/register dist/test",
-    "debug": "ts-node --inspect=19248 --debug-brk typescript-json-schema-cli.ts",
+    "debug": "node -r ts-node/register --inspect --inspect-brk typescript-json-schema-cli.ts",
     "docs": "./update-docs.js",
     "run": "ts-node typescript-json-schema-cli.ts",
     "build": "tsc -p .",
