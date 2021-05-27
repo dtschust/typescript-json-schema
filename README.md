@@ -50,6 +50,7 @@ Options:
   --noExtraProps        Disable additional properties in objects by default.         [boolean] [default: false]
   --propOrder           Create property order definitions.                           [boolean] [default: false]
   --required            Create required array for non-optional properties.           [boolean] [default: false]
+  --description         Create description fields from source comments.              [boolean] [default: true]
   --strictNullChecks    Make values non-nullable by default.                         [boolean] [default: false]
   --esModuleInterop     Use esModuleInterop when loading typescript modules.         [boolean] [default: false]
   --useTypeOfKeyword    Use `typeOf` keyword (https://goo.gl/DC6sni) for functions.  [boolean] [default: false]

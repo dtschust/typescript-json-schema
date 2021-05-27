@@ -45,6 +45,7 @@ export function getDefaultArgs(): Args {
         propOrder: false,
         typeOfKeyword: false,
         required: false,
+        description: true,
         strictNullChecks: false,
         esModuleInterop: false,
         ignoreErrors: false,
@@ -74,6 +75,7 @@ export type Args = {
     propOrder: boolean;
     typeOfKeyword: boolean;
     required: boolean;
+    description: boolean;
     strictNullChecks: boolean;
     esModuleInterop: boolean;
     ignoreErrors: boolean;
@@ -531,7 +533,7 @@ export class JsonSchemaGenerator {
             return;
         }
 
-        if (!this.isFromDefaultLib(symbol)) {
+        if (!this.isFromDefaultLib(symbol) && this.args.description) {
             // the comments for a symbol
             const comments = symbol.getDocumentationComment(this.tc);
 

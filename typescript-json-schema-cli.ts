@@ -26,6 +26,8 @@ export function run() {
             .describe("useTypeOfKeyword", "Use typeOf keyword (https://goo.gl/DC6sni) for functions.")
         .boolean("required").default("required", defaultArgs.required)
             .describe("required", "Create required array for non-optional properties.")
+        .boolean("description").default("description", defaultArgs.description)
+            .describe("description", "Create description fields from source comments.")
         .boolean("strictNullChecks").default("strictNullChecks", defaultArgs.strictNullChecks)
             .describe("strictNullChecks", "Make values non-nullable by default.")
         .boolean("esModuleInterop").default("esModuleInterop", defaultArgs.esModuleInterop)
@@ -70,6 +72,7 @@ export function run() {
         validationKeywords: args.validationKeywords,
         include: args.include,
         excludePrivate: args.excludePrivate,
+        description: args.description,
         uniqueNames: args.uniqueNames,
         rejectDateType: args.rejectDateType,
         id: args.id,
