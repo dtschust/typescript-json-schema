@@ -1051,6 +1051,18 @@ export class JsonSchemaGenerator {
                         }
                     }
                 }
+            } else if (node.kind === ts.SyntaxKind.MappedType) {
+                const recordNode: ts.TypeReferenceNode = (clazzType?.aliasSymbol?.declarations?.[0] as any)?.type;
+
+                if ((recordNode?.typeName as any)?.escapedText === 'Record') {
+                    const recordTypeNode: ts.Node = (recordNode as any).typeArguments?.[1];
+                    if (recordTypeNode) {
+                        const typ = this.tc.getTypeAtLocation(recordTypeNode);
+                        const def = this.getTypeDefinition(typ, undefined, "anyOf");
+                        definition.type = "object";
+                        definition.additionalProperties = def;
+                    }
+                }
             }
 
             const propertyDefinitions = props.reduce((all, prop) => {
