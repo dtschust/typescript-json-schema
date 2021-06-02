@@ -1189,6 +1189,16 @@ export class JsonSchemaGenerator {
             return definition;
         }
 
+        const symbol = typ.getSymbol();
+        const name = symbol?.getName() || '';
+        const node = symbol?.getDeclarations() !== undefined ? symbol.getDeclarations()![0] : null;
+
+        if (node?.kind === ts.SyntaxKind.InterfaceDeclaration && ['Map', 'Set', 'WeakMap', 'WeakSet'].includes(name)) {
+            const failedDeclarationText = pairedSymbol?.declarations?.[0]?.getText?.();
+            throw new Error(`Unable to generate schema for Map or Set. Instead of generating a schema, you must write your own validator function.
+            Sorry, I did my best${failedDeclarationText ? '. Here\'s the failing declaration: \n' + failedDeclarationText: '!'}`);
+        }
+
         let returnedDefinition = definition; // returned definition, may be a $ref
 
         // Parse property comments now to skip recursive if ignore.
@@ -1201,7 +1211,6 @@ export class JsonSchemaGenerator {
             }
         }
 
-        const symbol = typ.getSymbol();
         // FIXME: We can't just compare the name of the symbol - it ignores the namespace
         const isRawType =
             !symbol ||
@@ -1309,7 +1318,6 @@ export class JsonSchemaGenerator {
                     definition.title = fullTypeName;
                 }
             }
-            const node = symbol?.getDeclarations() !== undefined ? symbol.getDeclarations()![0] : null;
 
             if (definition.type === undefined) {
                 // if users override the type, do not try to infer it
