@@ -73,6 +73,7 @@ function getDefaultArgs() {
         required: false,
         description: true,
         strictNullChecks: false,
+        esModuleInterop: false,
         ignoreErrors: false,
         out: "",
         validationKeywords: [],
@@ -874,6 +875,7 @@ var JsonSchemaGenerator = (function () {
         return name;
     };
     JsonSchemaGenerator.prototype.getTypeDefinition = function (typ, asRef, unionModifier, prop, reffedType, pairedSymbol) {
+        var _a, _b, _c;
         if (asRef === void 0) { asRef = this.args.ref; }
         if (unionModifier === void 0) { unionModifier = "anyOf"; }
         var definition = {};
@@ -890,6 +892,13 @@ var JsonSchemaGenerator = (function () {
             definition.typeof = "function";
             return definition;
         }
+        var symbol = typ.getSymbol();
+        var name = (symbol === null || symbol === void 0 ? void 0 : symbol.getName()) || '';
+        var node = (symbol === null || symbol === void 0 ? void 0 : symbol.getDeclarations()) !== undefined ? symbol.getDeclarations()[0] : null;
+        if ((node === null || node === void 0 ? void 0 : node.kind) === ts.SyntaxKind.InterfaceDeclaration && ['Map', 'Set', 'WeakMap', 'WeakSet'].includes(name)) {
+            var failedDeclarationText = (_c = (_b = (_a = pairedSymbol === null || pairedSymbol === void 0 ? void 0 : pairedSymbol.declarations) === null || _a === void 0 ? void 0 : _a[0]) === null || _b === void 0 ? void 0 : _b.getText) === null || _c === void 0 ? void 0 : _c.call(_b);
+            throw new Error("Unable to generate schema for Map or Set. Instead of generating a schema, you must write your own validator function.\n            Sorry, I did my best" + (failedDeclarationText ? '. Here\'s the failing declaration: \n' + failedDeclarationText : '!'));
+        }
         var returnedDefinition = definition;
         if (prop) {
             var defs = {};
@@ -899,7 +908,6 @@ var JsonSchemaGenerator = (function () {
                 return defs;
             }
         }
-        var symbol = typ.getSymbol();
         var isRawType = !symbol ||
             (this.tc.getFullyQualifiedName(symbol) !== "Window" &&
                 (this.tc.getFullyQualifiedName(symbol) === "Date" ||
@@ -984,7 +992,6 @@ var JsonSchemaGenerator = (function () {
                     definition.title = fullTypeName;
                 }
             }
-            var node = (symbol === null || symbol === void 0 ? void 0 : symbol.getDeclarations()) !== undefined ? symbol.getDeclarations()[0] : null;
             if (definition.type === undefined) {
                 if (typ.flags & ts.TypeFlags.Union) {
                     this.getUnionDefinition(typ, prop, unionModifier, definition);
@@ -1296,6 +1303,7 @@ function exec(filePattern, fullTypeName, args) {
                 onlyIncludeFiles = glob.sync(filePattern);
                 program = getProgramFromFiles(onlyIncludeFiles, {
                     strictNullChecks: args.strictNullChecks,
+                    esModuleInterop: args.esModuleInterop
                 });
                 onlyIncludeFiles = onlyIncludeFiles.map(normalizeFileName);
             }

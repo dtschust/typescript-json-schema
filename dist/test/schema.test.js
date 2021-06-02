@@ -23,15 +23,27 @@ var ajv = new ajv_1.default({
 });
 ajv_formats_1.default(ajv);
 var BASE = "test/programs/";
-function assertSchema(group, type, settings, compilerOptions, only, ajvOptions) {
+function assertSchemaThrows(group, type, settings, compilerOptions, only, ajvOptions) {
+    if (settings === void 0) { settings = {}; }
+    if (ajvOptions === void 0) { ajvOptions = {}; }
+    var throws = true;
+    return assertSchema(group, type, settings, compilerOptions, only, ajvOptions, throws);
+}
+function assertSchema(group, type, settings, compilerOptions, only, ajvOptions, throws) {
     if (settings === void 0) { settings = {}; }
     if (ajvOptions === void 0) { ajvOptions = {}; }
     var run = only ? it.only : it;
-    run(group + " should create correct schema", function () {
+    run(group + (throws ? " should throw an error during schema generation" : " should create correct schema"), function () {
         if (!("required" in settings)) {
             settings.required = true;
         }
         var files = [path_1.resolve(BASE + group + "/main.ts")];
+        if (throws) {
+            chai_1.assert.throws(function () {
+                TJS.generateSchema(TJS.getProgramFromFiles(files, compilerOptions), type, settings, files);
+            });
+            return;
+        }
         var actual = TJS.generateSchema(TJS.getProgramFromFiles(files, compilerOptions), type, settings, files);
         var file = fs_1.readFileSync(BASE + group + "/schema.json", "utf8");
         var expected = JSON.parse(file);
@@ -252,6 +264,10 @@ describe("schema", function () {
         assertSchema("map-types", "MyObject");
         assertSchema("records", "MyRecord");
         assertSchema("extra-properties", "MyObject");
+        assertSchemaThrows("map", "MyMap");
+        assertSchemaThrows("weak-map", "MyWeakMap");
+        assertSchemaThrows("set", "MySet");
+        assertSchemaThrows("weak-set", "MyWeakSet");
     });
     describe("string literals", function () {
         assertSchema("string-literals", "MyObject");

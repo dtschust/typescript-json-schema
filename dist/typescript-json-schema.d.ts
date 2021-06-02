@@ -17,6 +17,7 @@ export declare type Args = {
     required: boolean;
     description: boolean;
     strictNullChecks: boolean;
+    esModuleInterop: boolean;
     ignoreErrors: boolean;
     out: string;
     validationKeywords: string[];
