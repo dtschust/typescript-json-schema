@@ -30,7 +30,7 @@ interface AjvTestOptions {
     expectedWarnings: string[];
 }
 
-export function assertSchema(
+function assertSchemaThrows (
     group: string,
     type: string,
     settings: TJS.PartialArgs = {},
@@ -38,14 +38,34 @@ export function assertSchema(
     only?: boolean,
     ajvOptions: Partial<AjvTestOptions> = {}
 ) {
+    const throws = true;
+    return assertSchema(group, type, settings, compilerOptions, only, ajvOptions, throws);
+}
+
+export function assertSchema(
+    group: string,
+    type: string,
+    settings: TJS.PartialArgs = {},
+    compilerOptions?: TJS.CompilerOptions,
+    only?: boolean,
+    ajvOptions: Partial<AjvTestOptions> = {},
+    throws?: boolean,
+) {
     const run = only ? it.only : it;
 
-    run(group + " should create correct schema", () => {
+    run(group + (throws ? " should throw an error during schema generation" :" should create correct schema"), () => {
         if (!("required" in settings)) {
             settings.required = true;
         }
 
         const files = [resolve(BASE + group + "/main.ts")];
+
+        if (throws) {
+            assert.throws(() => {
+                TJS.generateSchema(TJS.getProgramFromFiles(files, compilerOptions), type, settings, files);
+            });
+            return;
+        }
         const actual = TJS.generateSchema(TJS.getProgramFromFiles(files, compilerOptions), type, settings, files);
 
         // writeFileSync(BASE + group + "/schema.json", stringify(actual, {space: 4}) + "\n\n");
@@ -349,6 +369,10 @@ describe("schema", () => {
         assertSchema("map-types", "MyObject");
         assertSchema("records", "MyRecord");
         assertSchema("extra-properties", "MyObject");
+        assertSchemaThrows("map", "MyMap");
+        assertSchemaThrows("weak-map", "MyWeakMap");
+        assertSchemaThrows("set", "MySet");
+        assertSchemaThrows("weak-set", "MyWeakSet");
     });
 
     describe("string literals", () => {
