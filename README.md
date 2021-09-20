@@ -1,3 +1,16 @@
+# ⚠️ THIS REPO IS A WIP ⚠️
+
+# RELEASE
+First, commit and merge changes to this repo. This will have no effect on `webapp` at all.
+
+Then to publish:
+-   Get your [environment set up](https://paper.dropbox.com/doc/Accessing-our-private-npm-registry--BJwkMIl84dHYr72g84ItN_13Ag-tXGFzYmz3MDh8Uv09aTky) to access Artifactory
+-   Run `yarn publish` and follow the instructions.
+-   Commit and publish a release on Github
+-   Update to the new version in webapp.
+
+# NON-SLACK README BELOW
+
 # typescript-json-schema
 
 [![npm version](https://img.shields.io/npm/v/typescript-json-schema.svg)](https://www.npmjs.com/package/typescript-json-schema) ![Test](https://github.com/YousefED/typescript-json-schema/workflows/Test/badge.svg)
